@@ -2,7 +2,8 @@
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-UDP_PORT=$(jq -r '.udp_port // 7331' "${SCRIPT_DIR}/hud_config.json" 2>/dev/null || echo 7331)
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+UDP_PORT=$(jq -r '.udp_port // 7331' "${PROJECT_ROOT}/hud_config.json" 2>/dev/null || echo 7331)
 ORIGINAL_TEXT="Hello world, Hello Shiroe!"
 LOREM_WIDE="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
 
@@ -26,14 +27,13 @@ if ! pgrep -x picom >/dev/null; then
 fi
 
 # Kill any existing HUD instances
-pkill -f "electron-desktop-hud" 2>/dev/null || true
-pkill -f "electron dist/main.js" 2>/dev/null || true
+pkill -f "electron.*dist/main.js" 2>/dev/null || true
 sleep 1
 
 # Build and launch the app in the background
-cd "$SCRIPT_DIR"
+cd "$PROJECT_ROOT"
 pnpm run build
-electron dist/main.js &
+pnpm exec electron dist/main.js &
 APP_PID=$!
 
 # Wait until the UDP port is bound (app is ready to receive messages)
