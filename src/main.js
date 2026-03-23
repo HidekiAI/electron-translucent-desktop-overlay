@@ -76,22 +76,26 @@ function computeWindowPosition() {
   const w = config.width;
   const h = config.height;
 
-  if (config.position === 'bottom-center' || (!config.x && !config.y)) {
-    return {
-      x: Math.round((sw - w) / 2),
-      y: sh - h - 40,
-    };
-  }
+  const noCoords = config.x == null && config.y == null;
+
   if (config.position === 'top-center') {
     return {
       x: Math.round((sw - w) / 2),
       y: 40,
     };
   }
+
+  if (config.position === 'bottom-center' || noCoords) {
+    return {
+      x: Math.round((sw - w) / 2),
+      y: sh - h - 40,
+    };
+  }
+
   // 'custom' or explicit x/y
   return {
-    x: config.x || 0,
-    y: config.y || 0,
+    x: typeof config.x === 'number' ? config.x : 0,
+    y: typeof config.y === 'number' ? config.y : 0,
   };
 }
 
