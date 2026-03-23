@@ -114,7 +114,11 @@ function addLine(text) {
   lineQueue.push(el);
 
   // Enforce max line count (immediate removal, no fade).
-  while (lineQueue.length > cfg.maxLines) {
+  let safeMaxLines = Number.parseInt(cfg.maxLines, 10);
+  if (!Number.isFinite(safeMaxLines) || safeMaxLines < 0) {
+    safeMaxLines = 0;
+  }
+  while (lineQueue.length > safeMaxLines) {
     removeOldestLine();
   }
 
