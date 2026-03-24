@@ -120,6 +120,7 @@ Edit `src/config.json` to change the defaults before launch:
 | Key | Type | Default | Description |
 |---|---|---|---|
 | `udpPort` | number | `5005` | UDP port to listen on |
+| `udpBindAddress` | string | `"127.0.0.1"` | Address to bind the UDP server to |
 | `position` | string | `"bottom-center"` | `"bottom-center"` \| `"top-center"` \| `"custom"` |
 | `x` | number\|null | `null` | Window X when `position="custom"` |
 | `y` | number\|null | `null` | Window Y when `position="custom"` |
