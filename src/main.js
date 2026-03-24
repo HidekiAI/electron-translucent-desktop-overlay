@@ -123,6 +123,9 @@ function createWindow() {
     },
   });
 
+  // Apply initial opacity from config.
+  win.setOpacity(Math.min(1, Math.max(0, config.opacity)));
+
   // Make the window click-through so it does not interfere with other apps.
   win.setIgnoreMouseEvents(true);
 
