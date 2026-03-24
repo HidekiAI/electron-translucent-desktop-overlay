@@ -31,7 +31,7 @@ on top, and fully configurable for position, translucency and font size.
 
 ## Prerequisites
 
-- **Node.js** ≥ 18
+- **Node.js** 22.x (see `.nvmrc` for exact version)
 - A compositing window manager on Linux (e.g. GNOME, KDE Plasma, i3+picom)
   so that the transparent Electron window is actually composited.
 
