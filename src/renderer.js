@@ -121,6 +121,11 @@ function addLine(text) {
   while (lineQueue.length > safeMaxLines) {
     removeOldestLine();
   }
+  // If all lines were removed (e.g. maxLines === 0), hide the container again.
+  if (lineQueue.length === 0) {
+    container.style.visibility = 'hidden';
+    return;
+  }
 
   // Auto-remove after displayDuration ms if configured.
   if (cfg.displayDuration > 0) {
