@@ -37,6 +37,7 @@ const fs = require('fs');
 
 const DEFAULT_CONFIG = {
   udpPort: 5005,
+  udpBindAddress: '127.0.0.1',
   position: 'bottom-center',
   x: null,
   y: null,
@@ -206,7 +207,7 @@ function startUDPServer() {
     udpServer.close();
   });
 
-  udpServer.bind(config.udpPort, '0.0.0.0', () => {
+  udpServer.bind(config.udpPort, config.udpBindAddress, () => {
     const addr = udpServer.address();
     console.log(`[udp] Listening on ${addr.address}:${addr.port}`);
   });
