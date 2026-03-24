@@ -204,6 +204,8 @@ function applyConfigUpdate(partial) {
     config.position !== prev.position ||
     config.x !== prev.x ||
     config.y !== prev.y;
+  const needsUdpRebind =
+    config.udpPort !== prev.udpPort || config.udpBindAddress !== prev.udpBindAddress;
 
   if (win && !win.isDestroyed()) {
     if (config.opacity !== prev.opacity) {
@@ -217,6 +219,14 @@ function applyConfigUpdate(partial) {
       win.setPosition(x, y);
     }
     sendConfig();
+  }
+
+  if (needsUdpRebind && udpServer) {
+    console.log(`[udp] Rebinding to ${config.udpBindAddress}:${config.udpPort}`);
+    udpServer.close(() => {
+      udpServer = null;
+      startUDPServer();
+    });
   }
 }
 
