@@ -10,6 +10,8 @@ on top, and fully configurable for position, translucency and font size.
 > which uses WebKit2GTK — known to be buggy for composited transparency on
 > Linux.
 
+![simplescreenrecorder-2026-03-23_18 57 28](https://github.com/user-attachments/assets/b65d6be5-2592-48b9-858d-998f8c873cd8)
+
 ---
 
 ## Features
