@@ -8,6 +8,9 @@ A transparent, always-on-top HUD overlay for Linux desktops. Displays subtitle-l
 
 Built with **Electron / Chromium** because WebKit2GTK (Tauri) has an unfixed bug where alpha pixels are not cleared between repaints, leaving ghost text on the X11 surface.
 
+![simplescreenrecorder-2026-03-23_18 57 28](https://github.com/user-attachments/assets/b65d6be5-2592-48b9-858d-998f8c873cd8)
+
+
 ---
 
 ## Prerequisites
