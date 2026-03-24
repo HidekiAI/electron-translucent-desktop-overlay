@@ -260,8 +260,12 @@ function startUDPServer() {
   udpServer.on('error', (err) => {
     console.error('[udp] Error:', err.message);
     udpServer.close();
+    udpServer = null;
   });
 
+  udpServer.on('close', () => {
+    udpServer = null;
+  });
   udpServer.bind(config.udpPort, config.udpBindAddress, () => {
     const addr = udpServer.address();
     console.log(`[udp] Listening on ${addr.address}:${addr.port}`);
