@@ -148,10 +148,55 @@ function sendConfig() {
   }
 }
 
+/** Validate and sanitize a partial config object; returns only safe, known keys. */
+function sanitizeConfig(partial) {
+  const safe = {};
+  if (typeof partial.udpPort === 'number' && Number.isFinite(partial.udpPort) && partial.udpPort > 0 && partial.udpPort <= 65535) {
+    safe.udpPort = Math.trunc(partial.udpPort);
+  }
+  if (typeof partial.udpBindAddress === 'string') {
+    safe.udpBindAddress = partial.udpBindAddress;
+  }
+  if (typeof partial.position === 'string' && ['bottom-center', 'top-center', 'custom'].includes(partial.position)) {
+    safe.position = partial.position;
+  }
+  if (partial.x == null || (typeof partial.x === 'number' && Number.isFinite(partial.x))) {
+    safe.x = partial.x == null ? null : Math.trunc(partial.x);
+  }
+  if (partial.y == null || (typeof partial.y === 'number' && Number.isFinite(partial.y))) {
+    safe.y = partial.y == null ? null : Math.trunc(partial.y);
+  }
+  if (typeof partial.opacity === 'number' && Number.isFinite(partial.opacity)) {
+    safe.opacity = Math.min(1, Math.max(0, partial.opacity));
+  }
+  if (typeof partial.fontSize === 'number' && Number.isFinite(partial.fontSize) && partial.fontSize > 0) {
+    safe.fontSize = Math.trunc(partial.fontSize);
+  }
+  if (typeof partial.maxLines === 'number' && Number.isFinite(partial.maxLines) && partial.maxLines >= 0) {
+    safe.maxLines = Math.trunc(partial.maxLines);
+  }
+  if (typeof partial.textColor === 'string') {
+    safe.textColor = partial.textColor;
+  }
+  if (typeof partial.backgroundColor === 'string') {
+    safe.backgroundColor = partial.backgroundColor;
+  }
+  if (typeof partial.width === 'number' && Number.isFinite(partial.width) && partial.width > 0) {
+    safe.width = Math.trunc(partial.width);
+  }
+  if (typeof partial.height === 'number' && Number.isFinite(partial.height) && partial.height > 0) {
+    safe.height = Math.trunc(partial.height);
+  }
+  if (typeof partial.displayDuration === 'number' && Number.isFinite(partial.displayDuration) && partial.displayDuration >= 0) {
+    safe.displayDuration = Math.trunc(partial.displayDuration);
+  }
+  return safe;
+}
+
 /** Apply a partial config update, resize/reposition the window when needed. */
 function applyConfigUpdate(partial) {
   const prev = Object.assign({}, config);
-  config = Object.assign(config, partial);
+  config = Object.assign(config, sanitizeConfig(partial));
 
   const needsResize =
     config.width !== prev.width || config.height !== prev.height;
