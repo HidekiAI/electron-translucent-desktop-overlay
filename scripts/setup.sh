@@ -27,33 +27,10 @@ fi
 echo "pnpm: $(pnpm --version)"
 
 # ── Project dependencies ───────────────────────────────────────────────────────
+# onlyBuiltDependencies in pnpm-workspace.yaml whitelists electron and esbuild
+# so their install scripts (binary downloads) run automatically.
 echo "Installing project dependencies..."
-pnpm install
-
-# ── Electron binary ───────────────────────────────────────────────────────────
-# pnpm v10 blocks build scripts by default; run them explicitly so the
-# Electron binary is actually downloaded (not just the npm package metadata).
-ELECTRON_BINARY="node_modules/electron/dist/electron"
-
-echo "Checking Electron binary..."
-if [ ! -x "$ELECTRON_BINARY" ]; then
-    echo "Electron binary not found — running install script..."
-    node node_modules/electron/install.js
-fi
-
-if [ ! -x "$ELECTRON_BINARY" ]; then
-    echo "ERROR: Electron binary still missing after install. Check network or proxy settings." >&2
-    exit 1
-fi
-
-ELECTRON_VERSION=$(node -e "process.stdout.write(require('./node_modules/electron/package.json').version)")
-echo "Electron: ${ELECTRON_VERSION} ($(realpath "$ELECTRON_BINARY"))"
-
-# ── esbuild binary ────────────────────────────────────────────────────────────
-if [ ! -f "node_modules/esbuild/bin/esbuild" ]; then
-    echo "esbuild binary not found — running install script..."
-    node node_modules/esbuild/install.js
-fi
+nvm use && pnpm install && pnpm approve-builds
 
 echo ""
 echo "Setup complete."

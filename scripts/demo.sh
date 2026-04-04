@@ -26,9 +26,11 @@ if ! pgrep -x picom >/dev/null; then
     echo "Continuing anyway — transparency may not work correctly."
 fi
 
-# Kill any existing HUD instances
+# Kill any existing HUD instances and free the UDP port
 pkill -f "electron.*dist/main.js" 2>/dev/null || true
-sleep 1
+fuser -k "${UDP_PORT}/udp" 2>/dev/null || true
+# Wait until the port is actually free before starting fresh
+while ss -ulnp | grep -q ":${UDP_PORT}"; do sleep 0.2; done
 
 # Build and launch the app in the background
 cd "$PROJECT_ROOT"

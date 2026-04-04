@@ -4,6 +4,7 @@
   "description": "A transparent HUD-like overlay for Linux desktop displaying UDP text as closed-caption/subtitle",
   "main": "src/main.js",
   "scripts": {
+    "build": "node build.mjs",
     "start": "electron .",
     "start:x11": "electron --enable-transparent-visuals .",
     "test:send": "node test_sender.js"
@@ -21,6 +22,7 @@
   "author": "Hideki A. Ikeda",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^41.0.3"
+    "electron": "^41.0.3",
+    "esbuild": "^0.28.0"
   }
 }
