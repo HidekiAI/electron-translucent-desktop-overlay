@@ -33,6 +33,10 @@ const dgram = require('dgram');
 const path = require('path');
 const fs = require('fs');
 
+// Required for ARGB transparent windows on X11.  Without this flag Chromium
+// requests a 24-bit visual and transparent: true has no effect.
+app.commandLine.appendSwitch('enable-transparent-visuals');
+
 // ─── Configuration ───────────────────────────────────────────────────────────
 
 const DEFAULT_CONFIG = {
@@ -109,13 +113,13 @@ function createWindow() {
     width: config.width,
     height: config.height,
     transparent: true,
+    backgroundColor: '#00000000',
     frame: false,
     alwaysOnTop: true,
     skipTaskbar: true,
     resizable: false,
     hasShadow: false,
     focusable: false,
-    type: 'desktop',        // keeps it below regular windows on some WMs
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

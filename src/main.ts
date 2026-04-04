@@ -4,7 +4,8 @@ import * as dgram from 'dgram';
 import { loadConfig, DEFAULT_CONFIG, type HudConfig } from './config';
 import { computePosition, type WindowPosition } from './window-position';
 
-// Required for transparent windows on X11
+// Required for ARGB transparent windows on X11.  Without this flag Chromium
+// requests a 24-bit visual and transparent: true has no effect.
 app.commandLine.appendSwitch('enable-transparent-visuals');
 
 let mainWindow: BrowserWindow | null = null;
