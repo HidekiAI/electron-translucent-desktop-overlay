@@ -23,7 +23,8 @@ if ! pgrep -x picom >/dev/null; then
     echo "WARNING: picom is not running. Start it first:"
     echo "  xfconf-query -c xfwm4 -p /general/use_compositing -s false"
     echo "  picom --backend glx --no-use-damage &"
-    echo "Continuing anyway — transparency may not work correctly."
+    echo "EXITING! — transparency may not work correctly."
+    exit 1
 fi
 
 # Kill any existing HUD instances and free the UDP port
@@ -35,7 +36,7 @@ while ss -ulnp | grep -q ":${UDP_PORT}"; do sleep 0.2; done
 # Build and launch the app in the background
 cd "$PROJECT_ROOT"
 pnpm run build
-pnpm exec electron dist/main.js &
+GTK_CSD=0 node_modules/.bin/electron dist/main.js &
 APP_PID=$!
 
 # Wait until the UDP port is bound (app is ready to receive messages)
@@ -68,6 +69,6 @@ send_hud "$ORIGINAL_TEXT"
 sleep $DELAY
 
 kill "$APP_PID" 2>/dev/null
-wait "$APP_PID" 2>/dev/null
+wait "$APP_PID" 2>/dev/null || true
 
 echo "Demo complete."

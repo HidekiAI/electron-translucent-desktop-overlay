@@ -1,8 +1,24 @@
 import { app, BrowserWindow, ipcMain, screen } from 'electron';
 import * as path from 'path';
 import * as dgram from 'dgram';
+import { execSync } from 'child_process';
 import { loadConfig, DEFAULT_CONFIG, type HudConfig } from './config';
 import { computePosition, type WindowPosition } from './window-position';
+
+// Electron 36–41 has a regression on Linux X11: transparent CSS areas render
+// as opaque white instead of showing the desktop through.  Last confirmed-good
+// version is 35.x.  Warn loudly if someone accidentally upgrades.
+// To re-test a newer version: remove this guard, test, and update the limit.
+const _electronMajor = Number(process.versions.electron.split('.')[0]);
+if (_electronMajor >= 36) {
+  console.error(
+    `[HUD] FATAL: Electron ${process.versions.electron} is known-broken for ` +
+    `transparent ARGB windows on Linux X11 (Electron 36–41 regression: ` +
+    `transparent areas render as opaque white). ` +
+    `Pin to electron@35.x in package.json until upstream fixes this.`
+  );
+  app.exit(1);
+}
 
 // Required for ARGB transparent windows on X11.  Without this flag Chromium
 // requests a 24-bit visual and transparent: true has no effect.
@@ -31,10 +47,12 @@ app.whenReady().then(() => {
     height: config.height,
     transparent: true,
     frame: false,
+    show: false,
     alwaysOnTop: true,
     skipTaskbar: true,
     resizable: false,
     hasShadow: false,
+    focusable: false,
     backgroundColor: '#00000000',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -43,8 +61,23 @@ app.whenReady().then(() => {
     },
   });
 
+  const buf = mainWindow.getNativeWindowHandle();
+  const winIdNum = buf.length >= 8
+    ? Number(buf.readBigUInt64LE(0))
+    : buf.readUInt32LE(0);
+  try {
+    const helper = path.join(__dirname, 'hud-set-override-redirect');
+    execSync(`"${helper}" ${winIdNum}`);
+  } catch (e) {
+    console.warn(`[HUD] override_redirect helper failed (non-fatal):`, (e as Error).message);
+  }
+
   mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
   positionWindow('bottom');
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show();
+  });
 
   ipcMain.handle('get-config', () => config);
 
